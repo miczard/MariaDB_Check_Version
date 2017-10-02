@@ -1,0 +1,61 @@
+#application exclude
+#isr blb iss pam
+
+#phase exclude
+#qrt ap1
+
+######################################################################
+rm /tmp/MariaDB_Version.deleteme
+touch /tmp/MariaDB_Version.deleteme
+
+for PH in dev fvt uat mig pdt skl btprd ppt sty phy prd
+do
+i=1
+for app in adv ipp obx  ghi bfm  gsv mas
+do
+echo "select version()" | APF_sqlplus -a $app -p $PH   -k dba |  awk '{print $8,$11,$9 }' |grep MariaDB >> /tmp/MariaDB_Version.deleteme
+done
+done
+
+
+for PH in dev fvt uat mig pdt skl btprd ppt sty phy prd
+do
+i=1
+for app in cdh
+do
+for peak in  00 01 02 10 11 12 20 21 22 30 31 32 40 41 42 50 51 52 60 61 62 70 71 72
+do
+echo "select version()" | APF_sqlplus -a $app -p $PH -j pk$peak -k dba  | awk '{print $8,$11,$9 }' |  grep MariaDB >> /tmp/MariaDB_Version.deleteme
+done
+done
+done
+
+
+
+for PH in dev fvt uat mig pdt skl btprd ppt sty phy prd 
+do
+i=1
+for app in hcr
+do
+echo "select version()" | APF_sqlplus -a $app -p $PH   -k dbb | awk '{print $8,$11,$9 }'| grep MariaDB >> /tmp/MariaDB_Version.deleteme
+done
+done
+
+echo -ne  "ISRPRD " >> /tmp/MariaDB_Version.deleteme | mysql -udruidmysqlagent -pmiraculix12 -h 172.25.33.20  --socket=/PRD/MYSQL/isrcom/PRD/isrlog/isrprd.sock --port=30501 --execute="select version()" | grep MariaDB >> /tmp/MariaDB_Version.deleteme
+
+echo -ne  "ISR01PRD " >> /tmp/MariaDB_Version.deleteme | mysql -udruidmysqlagent -pmiraculix12 -h 172.25.37.77  --socket=/PRD/MYSQL/isr01com/PRD/isr01log/isrprd.sock --port=10101 --execute="select version()" | grep MariaDB >> /tmp/MariaDB_Version.deleteme
+
+
+
+
+echo -ne  "BLB00PHY " >> /tmp/MariaDB_Version.deleteme | mysql -udruidmysqlagent -pmiraculix12 -h 172.31.82.139   --socket=/PHY/MYSQL/blb00com/PHY/blb00log/blb00phy.sock --port=30701 --execute="select version()" | grep MariaDB >> /tmp/MariaDB_Version.deleteme
+
+echo -ne  "BLB00QAL " >> /tmp/MariaDB_Version.deleteme | mysql -udruidmysqlagent -pmiraculix12 -h 172.17.142.107   --socket=/QAL/MYSQL/blb00com/QAL/blb00log/blb00qal.sock --port=53960 --execute="select version()" | grep MariaDB >> /tmp/MariaDB_Version.deleteme
+
+echo -ne  "BLB00DEV " >> /tmp/MariaDB_Version.deleteme | mysql -udruidmysqlagent -pmiraculix12 -h 172.17.142.142   --socket=/DEV/MYSQL/blb00com/DEV/blb00log/blb00dev.sock --port=53970 --execute="select version()" | grep MariaDB >> /tmp/MariaDB_Version.deleteme
+
+echo -ne  "BLB00STG " >> /tmp/MariaDB_Version.deleteme | mysql -udruidmysqlagent -pmiraculix12 -h 172.17.142.72   --socket=/STG/MYSQL/blb00com/STG/blb00log/blb00stg.sock --port=53950 --execute="select version()" | grep MariaDB >> /tmp/MariaDB_Version.deleteme
+
+echo -ne  "BLB00PRD " >> /tmp/MariaDB_Version.deleteme | mysql -udruidmysqlagent -pmiraculix12 -h 172.25.33.21   --socket=/PRD/MYSQL/blb00com/PRD/blb00log/blb00prd.sock --port=30701 --execute="select version()" | grep MariaDB >> /tmp/MariaDB_Version.deleteme
+
+echo -ne  "BLB01PRD " >> /tmp/MariaDB_Version.deleteme | mysql -udruidmysqlagent -pmiraculix12 -h 172.25.37.78   --socket=/PRD/MYSQL/blb01com/PRD/blb01log/blb01prd.sock --port=10102 --execute="select version()" | grep MariaDB >> /tmp/MariaDB_Version.deleteme
